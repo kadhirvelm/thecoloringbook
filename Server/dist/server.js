@@ -25,7 +25,7 @@ const sockets = socket_io_1.default(server);
 sockets.on("connection", (socket) => {
     console.log("SOCKET CONNECTED", socket.id);
     socket.on("movement", (data) => {
-        sockets.emit("movement_2", data);
+        sockets.emit("movement", data);
     });
 });
 //# sourceMappingURL=server.js.map

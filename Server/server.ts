@@ -22,7 +22,10 @@ const server = app.listen(port, "192.168.0.108", (error: any) => {
 });
 
 interface IMovement {
-    vector: string;
+    m_Move: string;
+    crouch: string;
+    m_Jump: string;
+    player_number: string;
 }
 
 const sockets = io(server);
@@ -30,6 +33,6 @@ sockets.on("connection", (socket) => {
     console.log("SOCKET CONNECTED", socket.id);
 
     socket.on("movement", (data: IMovement) => {
-        sockets.emit("movement_2", data);
+        sockets.emit("movement", data);
     })
 });
