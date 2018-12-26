@@ -30,6 +30,6 @@ sockets.on("connection", (socket) => {
     console.log("SOCKET CONNECTED", socket.id);
 
     socket.on("movement", (data: IMovement) => {
-        socket.emit("movement_2", data);
+        sockets.emit("movement_2", data);
     })
 });
