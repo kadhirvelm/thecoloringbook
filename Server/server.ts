@@ -14,7 +14,7 @@ app.get("/", (req: Request, res: Response) => {
     });
 });
 
-const server = app.listen(port, (error: any) => {
+const server = app.listen(port, "192.168.0.108", (error: any) => {
     if (error) {
         console.error(error);
     }
@@ -30,6 +30,6 @@ sockets.on("connection", (socket) => {
     console.log("SOCKET CONNECTED", socket.id);
 
     socket.on("movement", (data: IMovement) => {
-        console.log("RECEIVED", data);
+        socket.emit("movement_2", data);
     })
 });

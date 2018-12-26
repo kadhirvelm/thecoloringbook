@@ -34,7 +34,8 @@ public class PlayerController : MonoBehaviour {
         player.AddForce(movement * speed);
 
         Dictionary<string, string> move = new Dictionary<string, string>();
-        move["vector"] = movement.ToString();
+        move["x"] = movement.x.ToString();
+        move["z"] = movement.z.ToString();
         socket.Emit("movement", new JSONObject(move));
     }
 

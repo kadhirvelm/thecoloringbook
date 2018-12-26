@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
         version: "1.0.0"
     });
 });
-const server = app.listen(port, (error) => {
+const server = app.listen(port, "192.168.0.108", (error) => {
     if (error) {
         console.error(error);
     }
@@ -25,7 +25,7 @@ const sockets = socket_io_1.default(server);
 sockets.on("connection", (socket) => {
     console.log("SOCKET CONNECTED", socket.id);
     socket.on("movement", (data) => {
-        console.log("RECEIVED", data);
+        socket.emit("movement_2", data);
     });
 });
 //# sourceMappingURL=server.js.map
