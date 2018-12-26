@@ -49,6 +49,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if (e.data["player_number"].str == playerNumber && !playerControlled)
             {
                 Debug.Log(e.data + " MOVE ME");
+                Debug.Log(new Vector3(float.Parse(e.data["m_Move_x"].str), float.Parse(e.data["m_Move_y"].str), float.Parse(e.data["m_Move_z"].str)) + " " + bool.Parse(e.data["crouch"].str) + " " + bool.Parse(e.data["m_Jump"].str));
+                m_Character.Move(new Vector3(float.Parse(e.data["m_Move_x"].str), float.Parse(e.data["m_Move_y"].str), float.Parse(e.data["m_Move_z"].str)), bool.Parse(e.data["crouch"].str), bool.Parse(e.data["m_Jump"].str));
             }
         }
 
@@ -66,37 +68,42 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void FixedUpdate()
         {
             // read inputs
-            float h = CrossPlatformInputManager.GetAxis("Horizontal");
-            float v = CrossPlatformInputManager.GetAxis("Vertical");
-            bool crouch = Input.GetKey(KeyCode.C);
-
-            // calculate move direction to pass to character
-            if (m_Cam != null)
+            if (playerControlled)
             {
-                // calculate camera relative direction to move:
-                m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-                m_Move = v * m_CamForward + h * m_Cam.right;
-            }
-            else
-            {
-                // we use world-relative directions in the case of no main camera
-                m_Move = v * Vector3.forward + h * Vector3.right;
-            }
-#if !MOBILE_INPUT
-            // walk speed multiplier
-            if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
-#endif
+                float h = CrossPlatformInputManager.GetAxis("Horizontal");
+                float v = CrossPlatformInputManager.GetAxis("Vertical");
+                bool crouch = Input.GetKey(KeyCode.C);
 
-            // pass all parameters to the character control script
-            m_Character.Move(m_Move, crouch, m_Jump);
-            m_Jump = false;
+                // calculate move direction to pass to character
+                if (m_Cam != null)
+                {
+                    // calculate camera relative direction to move:
+                    m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
+                    m_Move = v * m_CamForward + h * m_Cam.right;
+                }
+                else
+                {
+                    // we use world-relative directions in the case of no main camera
+                    m_Move = v * Vector3.forward + h * Vector3.right;
+                }
+    #if !MOBILE_INPUT
+                // walk speed multiplier
+                if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
+    #endif
 
-            Dictionary<string, string> move = new Dictionary<string, string>();
-            move["m_Move"] = m_Move.ToString();
-            move["crouch"] = crouch.ToString();
-            move["m_Jump"] = m_Jump.ToString();
-            move["player_number"] = playerNumber;
-            socket.Emit("movement", new JSONObject(move));
+                // pass all parameters to the character control script
+                m_Character.Move(m_Move, crouch, m_Jump);
+                m_Jump = false;
+
+                Dictionary<string, string> move = new Dictionary<string, string>();
+                move["m_Move_x"] = m_Move.x.ToString();
+                move["m_Move_y"] = m_Move.y.ToString();
+                move["m_Move_z"] = m_Move.z.ToString();
+                move["crouch"] = crouch.ToString();
+                move["m_Jump"] = m_Jump.ToString();
+                move["player_number"] = playerNumber;
+                socket.Emit("movement", new JSONObject(move));
+            }
         }
     }
 }
